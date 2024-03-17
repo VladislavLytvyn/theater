@@ -454,51 +454,49 @@ def send_mail(msg_s):
 
 
 class MyRequestHandler(BaseHTTPRequestHandler):
-    @staticmethod
-    def theater(self):
-        start_time = time.time()
-        event_count, new_event_count = 0, 0
-        while True:
-            for event_id in event_ids:
-                current_page = f"{page}{event_id}"
-                try:
-                    response = requests.get(current_page)
-                    if response.status_code == 200 and event_count < 10:
+    start_time = time.time()
+    event_count, new_event_count = 0, 0
+    while True:
+        for event_id in event_ids:
+            current_page = f"{page}{event_id}"
+            try:
+                response = requests.get(current_page)
+                if response.status_code == 200 and event_count < 10:
+                    body = f"Ping to {current_page} was successful!"
+                    msg = prepare_mail(body, SUBJECT_MAIl, SENDER, recipients)
+                    send_mail(msg)
+                    event_count += 1
+                print(response.status_code)
+            except requests.exceptions.RequestException as e:
+                print(f"Error pinging {current_page}: {e}")
+
+        for new_event_id in new_event_ids:
+            current_page = f"{page}{new_event_id}"
+            try:
+                response = requests.get(current_page)
+                if response.status_code == 200:
+                    soup = BeautifulSoup(response.content, "html.parser")
+                    contents = soup.find("h1").contents
+                    h1_tag = contents[0] if contents else None
+                    if h1_tag == "Конотопська відьма" or h1_tag == "Безталанна" and new_event_count < 20:
                         body = f"Ping to {current_page} was successful!"
                         msg = prepare_mail(body, SUBJECT_MAIl, SENDER, recipients)
+                        print(f"{datetime.now()}: found {h1_tag}")
                         send_mail(msg)
-                        event_count += 1
-                    print(response.status_code)
-                except requests.exceptions.RequestException as e:
-                    print(f"Error pinging {current_page}: {e}")
+                        new_event_count += 1
+            except requests.exceptions.RequestException as e:
+                print(f"Error pinging {current_page}: {e}")
 
-            for new_event_id in new_event_ids:
-                current_page = f"{page}{new_event_id}"
-                try:
-                    response = requests.get(current_page)
-                    if response.status_code == 200:
-                        soup = BeautifulSoup(response.content, "html.parser")
-                        contents = soup.find("h1").contents
-                        h1_tag = contents[0] if contents else None
-                        if h1_tag == "Конотопська відьма" or h1_tag == "Безталанна" and new_event_count < 20:
-                            body = f"Ping to {current_page} was successful!"
-                            msg = prepare_mail(body, SUBJECT_MAIl, SENDER, recipients)
-                            print(f"{datetime.now()}: found {h1_tag}")
-                            send_mail(msg)
-                            new_event_count += 1
-                except requests.exceptions.RequestException as e:
-                    print(f"Error pinging {current_page}: {e}")
-
-            current_time = time.time()
-            elapsed_time = current_time - start_time
-            if elapsed_time >= time_to_wait:
-                start_time = time.time()
-                revert_sender = env.str("TO_EMAIL")
-                revert_recipients = env.str("FROM_EMAIL")
-                msg = prepare_mail("Cycle is still working.", "Cycle is still working.", revert_sender,
-                                   revert_recipients)
-                send_mail(msg)
-            print(f"{datetime.now()}: end cycle.")
+        current_time = time.time()
+        elapsed_time = current_time - start_time
+        if elapsed_time >= time_to_wait:
+            start_time = time.time()
+            revert_sender = env.str("TO_EMAIL")
+            revert_recipients = env.str("FROM_EMAIL")
+            msg = prepare_mail("Cycle is still working.", "Cycle is still working.", revert_sender,
+                               revert_recipients)
+            send_mail(msg)
+        print(f"{datetime.now()}: end cycle.")
 
 
 def run(server_class=HTTPServer, handler_class=MyRequestHandler):
