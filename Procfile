@@ -1,1 +1,1 @@
-web: python theater.py
+web: sh launcher.sh
