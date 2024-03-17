@@ -395,4 +395,3 @@ while True:
         msg = prepare_mail("Cycle is still working.", "Cycle is still working.", revert_sender, revert_recipients)
         send_mail(msg)
     print(f"{datetime.now()}: end cycle.")
-    time.sleep(30)
