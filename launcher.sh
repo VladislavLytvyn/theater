@@ -1,4 +1,4 @@
 #!/bin/bash
 
-python file1.py &
-python file2.py &
+python server.py &
+python theater.py &
