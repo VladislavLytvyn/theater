@@ -293,8 +293,114 @@
 #     time.sleep(60)
 
 
+# ###############################
+# from datetime import datetime
+# import environ
+# import time
+# import requests
+# from bs4 import BeautifulSoup
+# from pathlib import Path
+# import smtplib
+# from email.mime.text import MIMEText
+
+
+# BASE_DIR = Path(__file__).resolve().parent
+#
+# env = environ.Env()
+# environ.Env.read_env(str(BASE_DIR / ".env"))
+#
+# SUBJECT_MAIl = "Ping Successful!!!"
+# SENDER = env.str("FROM_EMAIL")
+# PASSWORD = env.str("PASSWORD")
+#
+# recipients = [
+#     env.str("TO_EMAIL"),
+#     env.str("TO_EMAIL_2")
+# ]
+#
+# event_ids = [
+#     env.str("ID_1")
+# ]
+#
+# start_value = env.int("START_VALUE")
+# end_value = env.int("AND_VALUE")
+# new_event_ids = [str(i) for i in range(start_value, end_value + 1)]
+#
+# start_time = time.time()
+# time_to_wait = 60 * 30
+#
+# page = env.str("PAGE")
+#
+# headers = {
+#     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) '
+#                   'AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3',
+#     'Accept-Language': 'en-US,en;q=0.9'
+# }
+#
+#
+# def prepare_mail(body_mail, subject, sender, recipients_mail):
+#     msg_p = MIMEText(body_mail)
+#     msg_p["Subject"] = subject
+#     msg_p["From"] = sender
+#     msg_p["To"] = ', '.join(recipients_mail)
+#     return msg_p
+#
+#
+# def send_mail(msg_s):
+#     with smtplib.SMTP_SSL(env.str("SMTP_SERVER"), env.int("SMTP_PORT")) as smtp_server:
+#         smtp_server.login(SENDER, PASSWORD)
+#         smtp_server.sendmail(SENDER, recipients, msg_s.as_string())
+#     print(f"{datetime.now()}: message sent!")
+#
+#
+# event_count, new_event_count = 0, 0
+# while True:
+#     for event_id in event_ids:
+#         current_page = f"{page}{event_id}"
+#         try:
+#             response = requests.get(current_page, headers=headers)
+#             if response.status_code == 200 and event_count < 10:
+#                 body = f"Ping to {current_page} was successful!"
+#                 msg = prepare_mail(body, SUBJECT_MAIl, SENDER, recipients)
+#                 send_mail(msg)
+#                 event_count += 1
+#             print(response.status_code)
+#         except requests.exceptions.RequestException as e:
+#             print(f"Error pinging {current_page}: {e}")
+#
+#     for new_event_id in new_event_ids:
+#         current_page = f"{page}{new_event_id}"
+#         try:
+#             response = requests.get(current_page)
+#             if response.status_code == 200:
+#                 soup = BeautifulSoup(response.content, "html.parser")
+#                 contents = soup.find("h1").contents
+#                 h1_tag = contents[0] if contents else None
+#                 if h1_tag == "Конотопська відьма" or h1_tag == "Безталанна" and new_event_count < 20:
+#                     body = f"Ping to {current_page} was successful!"
+#                     msg = prepare_mail(body, SUBJECT_MAIl, SENDER, recipients)
+#                     print(f"{datetime.now()}: found {h1_tag}")
+#                     send_mail(msg)
+#                     new_event_count += 1
+#         except requests.exceptions.RequestException as e:
+#             print(f"Error pinging {current_page}: {e}")
+#
+#     current_time = time.time()
+#     elapsed_time = current_time - start_time
+#     if elapsed_time >= time_to_wait:
+#         start_time = time.time()
+#         revert_sender = env.str("TO_EMAIL")
+#         revert_recipients = env.str("FROM_EMAIL")
+#         msg = prepare_mail("Cycle is still working.", "Cycle is still working.", revert_sender, revert_recipients)
+#         send_mail(msg)
+#     print(f"{datetime.now()}: end cycle.")
+
+
+
 # ##############################
 # Try use user_agent.
+import os
+from http.server import BaseHTTPRequestHandler, HTTPServer
 from datetime import datetime
 import environ
 import time
@@ -327,16 +433,9 @@ start_value = env.int("START_VALUE")
 end_value = env.int("AND_VALUE")
 new_event_ids = [str(i) for i in range(start_value, end_value + 1)]
 
-start_time = time.time()
 time_to_wait = 60 * 30
 
 page = env.str("PAGE")
-
-headers = {
-    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) '
-                  'AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3',
-    'Accept-Language': 'en-US,en;q=0.9'
-}
 
 
 def prepare_mail(body_mail, subject, sender, recipients_mail):
@@ -354,44 +453,61 @@ def send_mail(msg_s):
     print(f"{datetime.now()}: message sent!")
 
 
-event_count, new_event_count = 0, 0
-while True:
-    for event_id in event_ids:
-        current_page = f"{page}{event_id}"
-        try:
-            response = requests.get(current_page, headers=headers)
-            if response.status_code == 200 and event_count < 10:
-                body = f"Ping to {current_page} was successful!"
-                msg = prepare_mail(body, SUBJECT_MAIl, SENDER, recipients)
-                send_mail(msg)
-                event_count += 1
-            print(response.status_code)
-        except requests.exceptions.RequestException as e:
-            print(f"Error pinging {current_page}: {e}")
-
-    for new_event_id in new_event_ids:
-        current_page = f"{page}{new_event_id}"
-        try:
-            response = requests.get(current_page)
-            if response.status_code == 200:
-                soup = BeautifulSoup(response.content, "html.parser")
-                contents = soup.find("h1").contents
-                h1_tag = contents[0] if contents else None
-                if h1_tag == "Конотопська відьма" or h1_tag == "Безталанна" and new_event_count < 20:
-                    body = f"Ping to {current_page} was successful!"
-                    msg = prepare_mail(body, SUBJECT_MAIl, SENDER, recipients)
-                    print(f"{datetime.now()}: found {h1_tag}")
-                    send_mail(msg)
-                    new_event_count += 1
-        except requests.exceptions.RequestException as e:
-            print(f"Error pinging {current_page}: {e}")
-
-    current_time = time.time()
-    elapsed_time = current_time - start_time
-    if elapsed_time >= time_to_wait:
+class MyRequestHandler(BaseHTTPRequestHandler):
+    @staticmethod
+    def theater(self):
         start_time = time.time()
-        revert_sender = env.str("TO_EMAIL")
-        revert_recipients = env.str("FROM_EMAIL")
-        msg = prepare_mail("Cycle is still working.", "Cycle is still working.", revert_sender, revert_recipients)
-        send_mail(msg)
-    print(f"{datetime.now()}: end cycle.")
+        event_count, new_event_count = 0, 0
+        while True:
+            for event_id in event_ids:
+                current_page = f"{page}{event_id}"
+                try:
+                    response = requests.get(current_page)
+                    if response.status_code == 200 and event_count < 10:
+                        body = f"Ping to {current_page} was successful!"
+                        msg = prepare_mail(body, SUBJECT_MAIl, SENDER, recipients)
+                        send_mail(msg)
+                        event_count += 1
+                    print(response.status_code)
+                except requests.exceptions.RequestException as e:
+                    print(f"Error pinging {current_page}: {e}")
+
+            for new_event_id in new_event_ids:
+                current_page = f"{page}{new_event_id}"
+                try:
+                    response = requests.get(current_page)
+                    if response.status_code == 200:
+                        soup = BeautifulSoup(response.content, "html.parser")
+                        contents = soup.find("h1").contents
+                        h1_tag = contents[0] if contents else None
+                        if h1_tag == "Конотопська відьма" or h1_tag == "Безталанна" and new_event_count < 20:
+                            body = f"Ping to {current_page} was successful!"
+                            msg = prepare_mail(body, SUBJECT_MAIl, SENDER, recipients)
+                            print(f"{datetime.now()}: found {h1_tag}")
+                            send_mail(msg)
+                            new_event_count += 1
+                except requests.exceptions.RequestException as e:
+                    print(f"Error pinging {current_page}: {e}")
+
+            current_time = time.time()
+            elapsed_time = current_time - start_time
+            if elapsed_time >= time_to_wait:
+                start_time = time.time()
+                revert_sender = env.str("TO_EMAIL")
+                revert_recipients = env.str("FROM_EMAIL")
+                msg = prepare_mail("Cycle is still working.", "Cycle is still working.", revert_sender,
+                                   revert_recipients)
+                send_mail(msg)
+            print(f"{datetime.now()}: end cycle.")
+
+
+def run(server_class=HTTPServer, handler_class=MyRequestHandler):
+    port = int(os.environ.get('PORT', 8000))
+    server_address = ('', port)
+    httpd = server_class(server_address, handler_class)
+    print(f'Starting server on port {port}...')
+    httpd.serve_forever()
+
+
+if __name__ == '__main__':
+    run()
