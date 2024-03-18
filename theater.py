@@ -400,8 +400,8 @@ while True:
         revert_sender = env.str("TO_EMAIL")
         revert_recipients = env.str("FROM_EMAIL")
         msg_revert = prepare_mail(
-            "PC. Cycle is still working.",
-            "PC. Cycle is still working.",
+            "PC. The cycle is still working.",
+            "PC. The cycle is still working.",
             revert_sender,
             revert_recipients
         )
