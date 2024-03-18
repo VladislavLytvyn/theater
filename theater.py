@@ -315,7 +315,9 @@ PASSWORD = env.str("PASSWORD")
 
 recipients = [
     env.str("TO_EMAIL"),
-    env.str("TO_EMAIL_2")
+    env.str("TO_EMAIL_2"),
+    env.str("TO_EMAIL_3"),
+    env.str("TO_EMAIL_4")
 ]
 
 event_ids = [
@@ -328,7 +330,7 @@ end_value = env.int("AND_VALUE")
 new_event_ids = [str(i) for i in range(start_value, end_value + 1)]
 
 start_time = time.time()
-time_to_wait = 60 * 30 * 2
+time_to_wait = 60 * 60 * 2  # 60*60*2=2 hours, 60*30=0,5 hour
 
 page = env.str("PAGE")
 
@@ -348,16 +350,17 @@ def send_mail(msg_s):
     print(f"{datetime.now()}: message sent!")
 
 
-event_count, new_event_count = 0, 0
+event_count, new_event_count, new_scope = 0, 0, 0
 while True:
+    print(f"{datetime.now()}: start cycle.")
     for event_id in event_ids:
         current_page = f"{page}{event_id}"
         try:
             response = requests.get(current_page)
             if response.status_code == 200 and event_count < 10:
                 body = f"Ping to {current_page} was successful!"
-                msg = prepare_mail(body, SUBJECT_MAIl, SENDER, recipients)
-                send_mail(msg)
+                msg_old_scope = prepare_mail(body, SUBJECT_MAIl, SENDER, recipients)
+                send_mail(msg_old_scope)
                 event_count += 1
         except requests.exceptions.RequestException as e:
             print(f"Error pinging {current_page}: {e}")
@@ -367,6 +370,17 @@ while True:
         try:
             response = requests.get(current_page)
             if response.status_code == 200:
+                if new_scope < 5:
+                    revert_sender_scope = env.str("TO_EMAIL")
+                    revert_recipients_scope = env.str("FROM_EMAIL")
+                    msg_new_scope = prepare_mail(
+                        "New scope open.",
+                        "New scope open.",
+                        revert_sender_scope,
+                        revert_recipients_scope
+                    )
+                    send_mail(msg_new_scope)
+                    new_scope += 1
                 soup = BeautifulSoup(response.content, "html.parser")
                 contents = soup.find("h1").contents
                 h1_tag = contents[0] if contents else None
@@ -385,7 +399,12 @@ while True:
         start_time = time.time()
         revert_sender = env.str("TO_EMAIL")
         revert_recipients = env.str("FROM_EMAIL")
-        msg = prepare_mail("Cycle is still working.", "Cycle is still working.", revert_sender, revert_recipients)
-        send_mail(msg)
+        msg_revert = prepare_mail(
+            "PC. Cycle is still working.",
+            "PC. Cycle is still working.",
+            revert_sender,
+            revert_recipients
+        )
+        send_mail(msg_revert)
     print(f"{datetime.now()}: end cycle.")
     time.sleep(300)
