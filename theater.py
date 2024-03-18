@@ -384,12 +384,12 @@ while True:
                 soup = BeautifulSoup(response.content, "html.parser")
                 contents = soup.find("h1").contents
                 h1_tag = contents[0] if contents else None
-                if h1_tag == "Конотопська відьма" or h1_tag == "Безталанна" and new_event_count < 20:
+                if h1_tag == "Конотопська відьма"  or h1_tag == "Безталанна" and new_event_count < 20:
                     body = f"Ping to {current_page} was successful!"
                     msg = prepare_mail(body, SUBJECT_MAIl, SENDER, recipients)
-                    print(f"{datetime.now()}: found {h1_tag}")
                     send_mail(msg)
                     new_event_count += 1
+                    print(f"{datetime.now()}: found {h1_tag}")
         except requests.exceptions.RequestException as e:
             print(f"Error pinging {current_page}: {e}")
 
