@@ -343,10 +343,10 @@ def prepare_mail(body_mail, subject, sender, recipients_mail):
     return msg_p
 
 
-def send_mail(msg_s):
+def send_mail(msg_s, recipients_s):
     with smtplib.SMTP_SSL(env.str("SMTP_SERVER"), env.int("SMTP_PORT")) as smtp_server:
         smtp_server.login(SENDER, PASSWORD)
-        smtp_server.sendmail(SENDER, recipients, msg_s.as_string())
+        smtp_server.sendmail(SENDER, recipients_s, msg_s.as_string())
     print(f"{datetime.now()}: message sent!")
 
 
@@ -360,7 +360,7 @@ while True:
             if response.status_code == 200 and event_count < 10:
                 body = f"Ping to {current_page} was successful!"
                 msg_old_scope = prepare_mail(body, SUBJECT_MAIl, SENDER, recipients)
-                send_mail(msg_old_scope)
+                send_mail(msg_old_scope, recipients)
                 event_count += 1
         except requests.exceptions.RequestException as e:
             print(f"Error pinging {current_page}: {e}")
@@ -371,15 +371,13 @@ while True:
             response = requests.get(current_page)
             if response.status_code == 200:
                 if new_scope < 5:
-                    revert_sender_scope = env.str("TO_EMAIL")
-                    revert_recipients_scope = env.str("FROM_EMAIL")
                     msg_new_scope = prepare_mail(
                         "New scope open.",
                         "New scope open.",
-                        revert_sender_scope,
-                        revert_recipients_scope
+                        SENDER,
+                        recipients[0]
                     )
-                    send_mail(msg_new_scope)
+                    send_mail(msg_new_scope, recipients[0])
                     new_scope += 1
                 soup = BeautifulSoup(response.content, "html.parser")
                 contents = soup.find("h1").contents
@@ -387,7 +385,7 @@ while True:
                 if new_event_count < 20 and (h1_tag == "Конотопська відьма" or h1_tag == "Безталанна"):
                     body = f"Ping to {current_page} was successful!"
                     msg = prepare_mail(body, SUBJECT_MAIl, SENDER, recipients)
-                    send_mail(msg)
+                    send_mail(msg, recipients)
                     new_event_count += 1
                     print(f"{datetime.now()}: found {h1_tag}")
         except requests.exceptions.RequestException as e:
@@ -397,14 +395,12 @@ while True:
     elapsed_time = current_time - start_time
     if elapsed_time >= time_to_wait:
         start_time = time.time()
-        revert_sender = env.str("TO_EMAIL")
-        revert_recipients = env.str("FROM_EMAIL")
         msg_revert = prepare_mail(
             "PC. The cycle is still working.",
             "PC. The cycle is still working.",
-            revert_sender,
-            revert_recipients
+            SENDER,
+            recipients[0]
         )
-        send_mail(msg_revert)
+        send_mail(msg_revert, recipients[0])
     print(f"{datetime.now()}: end cycle.")
     time.sleep(300)
