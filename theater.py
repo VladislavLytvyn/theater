@@ -319,7 +319,8 @@ recipients = [
 ]
 
 event_ids = [
-    env.str("ID_1")
+    env.str("ID_2"),
+    env.str("ID_3")
 ]
 
 start_value = env.int("START_VALUE")
@@ -327,7 +328,7 @@ end_value = env.int("AND_VALUE")
 new_event_ids = [str(i) for i in range(start_value, end_value + 1)]
 
 start_time = time.time()
-time_to_wait = 60 * 30
+time_to_wait = 60 * 30 * 2
 
 page = env.str("PAGE")
 
@@ -387,4 +388,4 @@ while True:
         msg = prepare_mail("Cycle is still working.", "Cycle is still working.", revert_sender, revert_recipients)
         send_mail(msg)
     print(f"{datetime.now()}: end cycle.")
-
+    time.sleep(300)
