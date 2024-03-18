@@ -384,7 +384,7 @@ while True:
                 soup = BeautifulSoup(response.content, "html.parser")
                 contents = soup.find("h1").contents
                 h1_tag = contents[0] if contents else None
-                if h1_tag == "Конотопська відьма"  or h1_tag == "Безталанна" and new_event_count < 20:
+                if new_event_count < 20 and (h1_tag == "Конотопська відьма" or h1_tag == "Безталанна"):
                     body = f"Ping to {current_page} was successful!"
                     msg = prepare_mail(body, SUBJECT_MAIl, SENDER, recipients)
                     send_mail(msg)
