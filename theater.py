@@ -410,7 +410,7 @@ while True:
         if new_except < 10:
             msg_except = prepare_mail(
                 "PC. Warning.",
-                "PC. Warning.",
+                f"PC. Warning. {e}",
                 SENDER,
                 recipients[0]
             )
