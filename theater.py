@@ -374,8 +374,8 @@ while True:
                     print(current_page)
                     if new_scope < 5:
                         msg_new_scope = prepare_mail(
-                            "New scope open.",
-                            f"New scope open. {current_page}",
+                            "PC. New scope open.",
+                            f"PC. New scope open. {current_page}",
                             SENDER,
                             recipients[0]
                         )
