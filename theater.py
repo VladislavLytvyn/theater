@@ -371,6 +371,7 @@ while True:
             try:
                 response = requests.get(current_page)
                 if response.status_code == 200:
+                    print(current_page)
                     if new_scope < 5:
                         msg_new_scope = prepare_mail(
                             "New scope open.",
@@ -404,7 +405,7 @@ while True:
             )
             send_mail(msg_revert, recipients[0])
         print(f"{datetime.now()}: end cycle.")
-        time.sleep(300)
+        time.sleep(180)
     except Exception as e:
         print(f"{datetime.now()}: {e}")
         if new_except < 10:
