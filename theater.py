@@ -374,8 +374,8 @@ while True:
                     print(current_page)
                     if new_scope < 5:
                         msg_new_scope = prepare_mail(
-                            "PC. New scope open.",
                             f"PC. New scope open. {current_page}",
+                            "PC. New scope open.",
                             SENDER,
                             recipients[0]
                         )
@@ -385,7 +385,7 @@ while True:
                     contents = soup.find("h1").contents
                     h1_tag = contents[0] if contents else None
                     if new_event_count < 20 and (h1_tag == "Конотопська відьма" or h1_tag == "Безталанна"):
-                        body = f"Ping to {current_page} was successful!"
+                        body = f"Ping to {h1_tag} {current_page} was successful!"
                         msg = prepare_mail(body, SUBJECT_MAIl, SENDER, recipients)
                         send_mail(msg, recipients)
                         new_event_count += 1
@@ -405,7 +405,7 @@ while True:
             )
             send_mail(msg_revert, recipients[0])
         print(f"{datetime.now()}: end cycle.")
-        time.sleep(180)
+        time.sleep(120)
     except Exception as e:
         print(f"{datetime.now()}: {e}")
         if new_except < 10:
