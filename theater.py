@@ -309,7 +309,7 @@ BASE_DIR = Path(__file__).resolve().parent
 env = environ.Env()
 environ.Env.read_env(str(BASE_DIR / ".env"))
 
-SUBJECT_MAIl = "Ping Successful!!!"
+SUBJECT_MAIl = "Конотопська відьма"
 SENDER = env.str("FROM_EMAIL")
 PASSWORD = env.str("PASSWORD")
 
@@ -317,7 +317,8 @@ recipients = [
     env.str("TO_EMAIL"),
     env.str("TO_EMAIL_2"),
     env.str("TO_EMAIL_3"),
-    env.str("TO_EMAIL_4")
+    env.str("TO_EMAIL_4"),
+    env.str("TO_EMAIL_5")
 ]
 
 event_ids = [
@@ -360,8 +361,8 @@ while True:
                 response = requests.get(current_page)
                 if response.status_code == 200 and event_count < 10:
                     body = f"Ping to {current_page} was successful!"
-                    msg_old_scope = prepare_mail(body, SUBJECT_MAIl, SENDER, recipients)
-                    send_mail(msg_old_scope, recipients)
+                    msg_old_scope = prepare_mail(body, SUBJECT_MAIl, SENDER, recipients[0])
+                    send_mail(msg_old_scope, recipients[0])
                     event_count += 1
             except requests.exceptions.RequestException as e:
                 print(f"Error pinging {current_page}: {e}")
@@ -384,8 +385,8 @@ while True:
                     soup = BeautifulSoup(response.content, "html.parser")
                     contents = soup.find("h1").contents
                     h1_tag = contents[0] if contents else None
-                    if new_event_count < 20 and (h1_tag == "Конотопська відьма" or h1_tag == "Безталанна"):
-                        body = f"Ping to {h1_tag} {current_page} was successful!"
+                    if new_event_count < 1 and h1_tag == "Конотопська відьма":
+                        body = f"Квитки на виставу: {h1_tag} можна замовити за посиланням: {current_page}"
                         msg = prepare_mail(body, SUBJECT_MAIl, SENDER, recipients)
                         send_mail(msg, recipients)
                         new_event_count += 1
