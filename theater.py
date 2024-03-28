@@ -79,7 +79,7 @@ while True:
                     print(current_page)
                     if new_scope < 20:
                         msg_new_scope = prepare_mail(
-                            f"PC. Посилання на виставу:  {current_page}",
+                            f"Посилання на виставу:  {current_page}",
                             "PC. З'явилась нова вистава.",
                             SENDER,
                             recipients[:2]
@@ -104,7 +104,7 @@ while True:
         if elapsed_time >= time_to_wait:
             start_time = time.time()
             msg_revert = prepare_mail(
-                "PC. The cycle is still working.",
+                "The cycle is still working.",
                 "PC. The cycle is still working.",
                 SENDER,
                 recipients[0]
@@ -116,8 +116,8 @@ while True:
         print(f"{datetime.now()}: {e}")
         if new_except < 10:
             msg_except = prepare_mail(
+                f"Warning. {e}",
                 "PC. Warning.",
-                f"PC. Warning. {e}",
                 SENDER,
                 recipients[0]
             )
