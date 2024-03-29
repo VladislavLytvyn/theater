@@ -22,7 +22,9 @@ recipients = [
     env.str("TO_EMAIL_2"),
     env.str("TO_EMAIL_3"),
     env.str("TO_EMAIL_4"),
-    env.str("TO_EMAIL_5")
+    env.str("TO_EMAIL_5"),
+    env.str("TO_EMAIL_6"),
+    env.str("TO_EMAIL_7")
 ]
 
 event_ids = [
