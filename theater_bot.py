@@ -17,11 +17,8 @@ url = env.str("URL_SEND_TELEGRAM")
 recipients = [
     env.str("TO_TELEGRAM"),
     env.str("TO_TELEGRAM_2"),
-    env.str("TO_TELEGRAM_3"),
-    env.str("TO_TELEGRAM_4"),
-    env.str("TO_TELEGRAM_5"),
-    env.str("TO_TELEGRAM_6"),
-    env.str("TO_TELEGRAM_7"),
+    env.str("TO_TELEGRAM_I"),
+    env.str("TO_TELEGRAM_4")
 ]
 
 start_value = env.int("START_VALUE")
