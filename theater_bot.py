@@ -18,7 +18,8 @@ recipients = [
     env.str("TO_TELEGRAM"),
     env.str("TO_TELEGRAM_2"),
     env.str("TO_TELEGRAM_I"),
-    env.str("TO_TELEGRAM_4")
+    env.str("TO_TELEGRAM_4"),
+    env.str("TO_TELEGRAM_7")
 ]
 
 start_value = env.int("START_VALUE")
