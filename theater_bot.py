@@ -75,11 +75,11 @@ while True:
         elapsed_time = current_time - start_time
         if elapsed_time >= time_to_wait:
             start_time = time.time()
-            send_mail("The cycle is still working.", recipients[0])
+            send_mail(recipients[0], "The cycle is still working.")
         print(f"{datetime.now()}: end cycle.")
         time.sleep(120)
     except Exception as e:
         print(f"{datetime.now()}: {e}")
         if new_except < 10:
-            send_mail(f"Warning. {e}", recipients[0])
+            send_mail(recipients[0], f"Warning. {e}")
             new_except += 1
