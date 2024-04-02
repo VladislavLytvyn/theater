@@ -42,7 +42,7 @@ def send_mail(telegram_chat_id, message):
         'chat_id': telegram_chat_id,
         'text': message
     }
-    return requests.get(url, params=params)
+    requests.get(url, params=params)
 
 
 new_event_count, new_scope, new_except = 0, 0, 0
