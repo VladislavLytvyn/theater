@@ -22,6 +22,10 @@ recipients = [
     env.str("TO_TELEGRAM_7")
 ]
 
+event_ids = [
+    env.str("ID_2")
+]
+
 start_value = env.int("START_VALUE")
 end_value = env.int("AND_VALUE")
 new_event_ids = [str(i) for i in range(start_value, end_value + 1)]
@@ -46,10 +50,23 @@ def send_mail(telegram_chat_id, message):
     requests.get(url, params=params)
 
 
-new_event_count, new_scope, new_except = 0, 0, 0
+new_event_count, new_scope, new_except, event_count = 0, 0, 0, 0
 while True:
     try:
         print(f"{datetime.now()}: start cycle.")
+        for event_id in event_ids:
+            current_page = f"{page}{event_id}"
+            try:
+                response = requests.get(current_page)
+                if response.status_code == 200 and event_count < 5:
+                    msg = prepare_message("Конотопська відьма", current_page)
+                    for chat_id in recipients:
+                        send_mail(chat_id, msg)
+                    event_count += 1
+                    print(f"{datetime.now()}: found Конотопська відьма")
+            except requests.exceptions.RequestException as e:
+                print(f"Error pinging {current_page}: {e}")
+
         for new_event_id in new_event_ids:
             current_page = f"{page}{new_event_id}"
             try:
@@ -78,7 +95,7 @@ while True:
             start_time = time.time()
             send_mail(recipients[0], "The cycle is still working.")
         print(f"{datetime.now()}: end cycle.")
-        time.sleep(120)
+        time.sleep(60)
     except Exception as e:
         print(f"{datetime.now()}: {e}")
         if new_except < 10:

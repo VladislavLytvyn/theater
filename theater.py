@@ -13,23 +13,24 @@ BASE_DIR = Path(__file__).resolve().parent
 env = environ.Env()
 environ.Env.read_env(str(BASE_DIR / ".env"))
 
-SUBJECT_MAIl = "Ping Successful!!!"
+SUBJECT_MAIl = "Конотопська відьма"
 SENDER = env.str("FROM_EMAIL")
 PASSWORD = env.str("PASSWORD")
 
 recipients = [
     env.str("TO_EMAIL"),
     env.str("TO_EMAIL_2"),
-    env.str("TO_EMAIL_3"),
+    env.str("TO_EMAIL_7"),
+    env.str("TO_EMAIL_8"),
+    env.str("TO_EMAIL_9"),
     env.str("TO_EMAIL_4"),
     env.str("TO_EMAIL_5"),
     env.str("TO_EMAIL_6"),
-    env.str("TO_EMAIL_7")
+    env.str("TO_EMAIL_3")
 ]
 
 event_ids = [
-    env.str("ID_2"),
-    env.str("ID_3")
+    env.str("ID_2")
 ]
 
 start_value = env.int("START_VALUE")
@@ -65,10 +66,10 @@ while True:
             current_page = f"{page}{event_id}"
             try:
                 response = requests.get(current_page)
-                if response.status_code == 200 and event_count < 10:
-                    body = f"Ping to {current_page} was successful!"
-                    msg_old_scope = prepare_mail(body, SUBJECT_MAIl, SENDER, recipients[0])
-                    send_mail(msg_old_scope, recipients[0])
+                if response.status_code == 200 and event_count < 5:
+                    body = f"Квитки на виставу: Конотопська відьма можна замовити за посиланням: {current_page}"
+                    msg_old_scope = prepare_mail(body, SUBJECT_MAIl, SENDER, recipients)
+                    send_mail(msg_old_scope, recipients)
                     event_count += 1
             except requests.exceptions.RequestException as e:
                 print(f"Error pinging {current_page}: {e}")
@@ -84,9 +85,9 @@ while True:
                             f"Посилання на виставу:  {current_page}",
                             "PC. З'явилась нова вистава.",
                             SENDER,
-                            recipients[:2]
+                            recipients[:5]
                         )
-                        send_mail(msg_new_scope, recipients[:2])
+                        send_mail(msg_new_scope, recipients[:5])
                         new_scope += 1
                     soup = BeautifulSoup(response.content, "html.parser")
                     contents = soup.find("h1").contents
@@ -113,7 +114,7 @@ while True:
             )
             send_mail(msg_revert, recipients[0])
         print(f"{datetime.now()}: end cycle.")
-        time.sleep(120)
+        time.sleep(60)
     except Exception as e:
         print(f"{datetime.now()}: {e}")
         if new_except < 10:
