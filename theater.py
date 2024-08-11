@@ -23,15 +23,14 @@ recipients = [
     env.str("TO_EMAIL_7"),
     env.str("TO_EMAIL_8"),
     env.str("TO_EMAIL_9"),
+    env.str("TO_EMAIL_10"),
     env.str("TO_EMAIL_4"),
     env.str("TO_EMAIL_5"),
     env.str("TO_EMAIL_6"),
     env.str("TO_EMAIL_3")
 ]
 
-event_ids = [
-    env.str("ID_2")
-]
+event_ids = []
 
 start_value = env.int("START_VALUE")
 end_value = env.int("AND_VALUE")
@@ -80,18 +79,18 @@ while True:
                 response = requests.get(current_page)
                 if response.status_code == 200:
                     print(current_page)
-                    if new_scope < 20:
-                        msg_new_scope = prepare_mail(
-                            f"Посилання на виставу:  {current_page}",
-                            "PC. З'явилась нова вистава.",
-                            SENDER,
-                            recipients[:5]
-                        )
-                        send_mail(msg_new_scope, recipients[:5])
-                        new_scope += 1
                     soup = BeautifulSoup(response.content, "html.parser")
                     contents = soup.find("h1").contents
                     h1_tag = contents[0] if contents else None
+                    if new_scope < 20:
+                        msg_new_scope = prepare_mail(
+                            f"Квитки на виставу {h1_tag} можна замовити за посиланням: {current_page}",
+                            "PC. З'явилась нова вистава.",
+                            SENDER,
+                            recipients[:7]
+                        )
+                        send_mail(msg_new_scope, recipients[:7])
+                        new_scope += 1
                     konotop = "Конотопська відьма"
                     if new_event_count < 1 and h1_tag == konotop:
                         body = f"Квитки на виставу: {h1_tag} можна замовити за посиланням: {current_page}"
